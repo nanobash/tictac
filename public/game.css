@@ -1,0 +1,60 @@
+.board td {
+	width: 120px;
+	height: 120px;
+}
+
+.board {
+	border-collapse: collapse;
+	margin: 20px;
+}
+
+.board td {
+	font-size: 40px;
+	text-align: center;
+	vertical-align: middle;
+	border: 1px solid #000;
+}
+
+.board tr:first-child td {
+	border-top: none;
+}
+
+.board tr:last-child td {
+	border-bottom: none;
+}
+
+.board td:first-child {
+	border-left: none;
+}
+
+.board td:last-child {
+	border-right: none;
+}
+
+.board a {
+	display: block;
+	text-decoration: none;
+	width: 120px;
+	height: 120px;
+}
+
+.board a:hover {
+	background: #9ff;
+}
+
+.board.disabled {
+	background: #eee;
+}
+
+.board.disabled a:hover {
+	background: #eee;	
+	cursor: default;
+}
+
+.match {
+	background: #9f9;
+}
+
+.board.disabled .match a:hover {
+	background: #9f9;
+}

@@ -127,9 +127,10 @@ app.get("/move", function(req, res) {
         valid = false;
     }
 
+    // Ensures, that the turn belongs to a specific player (either x or either o)
     if (turn !== player) {
-		valid = false;
-	}
+        valid = false;
+    }
 
     // If move is valid, assigns it to the board and updates the turn
     if (true === valid) {

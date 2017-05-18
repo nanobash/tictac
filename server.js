@@ -112,8 +112,33 @@ app.get("/turn", function(req, res) {
 
 // HTTP GET endpoint that makes a player move
 app.get("/move", function(req, res) {
-	// TODO: Implement this
-	res.send(JSON.stringify("Unimplemented"));
+	var valid = true;
+	var row = parseInt(req.param('row'));
+	var col = parseInt(req.param('col'));
+	var player = req.param('player');
+
+	// Ensures, that the row and col parameter values are either 0, 1 or 2 and the player is either 'x' or either 'o'
+	if (-1 === [0, 1, 2].indexOf(row) || -1 === [0, 1, 2].indexOf(col) || -1 === ['x', 'o'].indexOf(player)) {
+		valid = false;
+    }
+
+    // Ensures, that the move does not overlap already existed one
+    if ('' !== board[row][col]) {
+        valid = false;
+    }
+
+    if (turn !== player) {
+		valid = false;
+	}
+
+    // If move is valid, assigns it to the board and updates the turn
+    if (true === valid) {
+        board[row][col] = player;
+        turn = (true === gameEnded(board)) ? '' : ('x' === player) ? 'o' : 'x';
+    }
+
+    // Replies with true/false based on valid/invalid move params
+	res.send(JSON.stringify(valid));
 	res.end();
 });
 

@@ -203,3 +203,42 @@ GameUI.prototype.checkEnded = function() {
 	return this.ended
 }
 
+// Defines GameUI object messages
+GameUI.prototype.messages = {
+	'current': 'It is your move...',
+	'sending': 'Sending your move...',
+	'waiting': 'Waiting for opponent...',
+	'ended': 'The game has ended.',
+	'error': 'Detected Error!'
+};
+
+// Reusable functions
+function updateBoard() {
+    $.getJSON('/board', function (response) {
+        gameUI.setBoard(response);
+    });
+}
+
+function updateTurn() {
+    var timer = setInterval(function() {
+        updateBoard();
+
+        // Retrieves turn from server and updates UI player
+        $.getJSON('./turn', function (response) {
+            gameUI.setMessage(response === gameUI.player ? gameUI.messages.current : gameUI.messages.waiting);
+
+            if (gameUI.player === response || '' === response) {
+                clearInterval(timer);
+                gameUI.enable();
+            }
+
+            if (true === gameUI.ended) {
+				if ('' === response) {
+                    gameUI.setMessage('It\'s a tie!');
+				} else {
+                    gameUI.setMessage('Winner is ' + gameUI.winner + ' player!');
+                }
+			}
+        });
+    }, 1000);
+}

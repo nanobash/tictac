@@ -1,14 +1,17 @@
 {
-	"name": "chirps",
-	"description": "A social media website for sharing short messages",
-	"version": "0.0.1",
-	"private": true,
-	"engines": {
-		"node": ">=0.6.x",
-		"npm": "1.2.x"
-	},
-	"dependencies": {
-		"express": "3.2.x",
-		"ejs": "0.8.x"
-	}
+  "name": "chirps",
+  "description": "A social media website for sharing short messages",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=0.6.x",
+    "npm": "1.2.x"
+  },
+  "dependencies": {
+    "ejs": "0.8.x",
+    "express": "3.2.x",
+    "mongoose": "^4.10.0",
+    "nodemon": "^1.11.0",
+    "socket.io": "^2.0.1"
+  }
 }

@@ -212,33 +212,30 @@ GameUI.prototype.messages = {
 	'error': 'Detected Error!'
 };
 
-// Reusable functions
 function updateBoard() {
-    $.getJSON('/board', function (response) {
+    // Updates board from the Server
+    socket.on('board', function (response) {
         gameUI.setBoard(response);
     });
 }
 
 function updateTurn() {
-    var timer = setInterval(function() {
-        updateBoard();
+	// Updates turn from the Server
+	socket.on('turn', function (response) {
+        gameUI.setMessage(response === gameUI.player ? gameUI.messages.current : gameUI.messages.waiting);
 
-        // Retrieves turn from server and updates UI player
-        $.getJSON('./turn', function (response) {
-            gameUI.setMessage(response === gameUI.player ? gameUI.messages.current : gameUI.messages.waiting);
+        if (gameUI.player === response || '' === response) {
+        	gameUI.enable();
+		}
 
-            if (gameUI.player === response || '' === response) {
-                clearInterval(timer);
-                gameUI.enable();
-            }
+		if (true === gameUI.ended) {
+        	gameUI.disable();
 
-            if (true === gameUI.ended) {
-				if ('' === response) {
-                    gameUI.setMessage('It\'s a tie!');
-				} else {
-                    gameUI.setMessage('Winner is ' + gameUI.winner + ' player!');
-                }
+            if ('' === gameUI.winner) {
+                gameUI.setMessage('It\'s a tie!');
+			} else {
+                gameUI.setMessage('Winner is ' + gameUI.winner + ' player!');
 			}
-        });
-    }, 1000);
+		}
+    });
 }

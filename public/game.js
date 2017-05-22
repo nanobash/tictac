@@ -1,35 +1,28 @@
 // Create game interface
 var gameUI = new GameUI(".container", player);
+var socket = io();
 
 // Initialize game
 var init = function() {
+	updateBoard();
 	updateTurn();
 };
 
+socket.on('connecting', function () {
+    gameUI.setMessage(gameUI.messages.sending);
+});
+
 // Callback function for when the user makes a move
 var callback = function(row, col, player) {
-	$.ajax({
-		url: './move',
-		method: 'GET',
-		data: {
-			row: row,
-			col: col,
-			player: player
-		},
-		beforeSend: function () {
-			gameUI.setMessage(gameUI.messages.sending);
-        },
-		success: function (response) {
-			if (true === JSON.parse(response)) {
-				// Request was received successfully by server
-
-            }
-        },
-		error: function (error) {
-            console.log(error);
+    socket.emit('move', {
+        request: {
+            row: row,
+            col: col,
+            player: player
         }
-	});
+    });
 
+    updateBoard();
     updateTurn();
 };
 
@@ -37,4 +30,4 @@ var callback = function(row, col, player) {
 gameUI.callback = callback;
 
 // Initialize game
-init()
+init();

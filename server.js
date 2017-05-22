@@ -6,6 +6,8 @@ var ejs = require("ejs");
 
 // Create server
 var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 // Print HTTP requests to console
 app.use(express.logger());
@@ -146,7 +148,45 @@ app.get("/move", function(req, res) {
 // Initialize the game
 resetGame();
 
+// Socket IO implementation
+io.on('connect', function (socket) {
+    // Sending to Client
+    io.emit('board', board);
+    io.emit('turn', turn);
+
+    socket.on('move', function (request) {
+        var valid = true;
+        var row = parseInt(request.request.row);
+        var col = parseInt(request.request.col);
+        var player = request.request.player;
+
+        // Ensures, that the row and col parameter values are either 0, 1 or 2 and the player is either 'x' or either 'o'
+        if (-1 === [0, 1, 2].indexOf(row) || -1 === [0, 1, 2].indexOf(col) || -1 === ['x', 'o'].indexOf(player)) {
+            valid = false;
+        }
+
+        // Ensures, that the move does not overlap already existed one
+        if ('' !== board[row][col]) {
+            valid = false;
+        }
+
+        // Ensures, that the turn belongs to a specific player (either x or either o)
+        if (turn !== player) {
+            valid = false;
+        }
+
+        // If move is valid, assigns it to the board and updates the turn
+        if (true === valid) {
+            board[row][col] = player;
+            turn = (true === gameEnded(board)) ? '' : ('x' === player) ? 'o' : 'x';
+        }
+
+        io.emit('board', board);
+        io.emit('turn', turn);
+    });
+});
+
 // Listen for new HTTP connections at the given port number
 var port = process.env.PORT || 4000;
-app.listen(port);
+http.listen(port);
 console.log("Listening for new connections on http://localhost:" + port + "/");
